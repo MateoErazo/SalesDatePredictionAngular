@@ -10,13 +10,19 @@
         <div class="EmployeeShipper">
             <mat-form-field appearance="fill">
                 <mat-label>Employee</mat-label>
-                <input matInput [formControl]="form.controls.Employee"/>
+                <mat-select [formControl]="form.controls.Employee">
+                    <mat-option value="One">First Option</mat-option>
+                    <mat-option value="Two">Second Option</mat-option>
+                </mat-select>
                 <mat-error>{{getErrorEmployeeField()}}</mat-error>
             </mat-form-field>
         
             <mat-form-field appearance="fill">
                 <mat-label>Shipper</mat-label>
-                <input matInput [formControl]="form.controls.Shipper"/>
+                <mat-select [formControl]="form.controls.Shipper">
+                    <mat-option value="One">First Option</mat-option>
+                    <mat-option value="Two">Second Option</mat-option>
+                </mat-select>
                 <mat-error>{{getErrorShipperField()}}</mat-error>
             </mat-form-field>
         </div>
@@ -83,7 +89,10 @@
         <div class="Product">
             <mat-form-field appearance="fill">
                 <mat-label>Product</mat-label>
-                <input matInput [formControl]="form.controls.Product"/>
+                <mat-select [formControl]="form.controls.Product">
+                    <mat-option value="First Option">First Option</mat-option>
+                    <mat-option value="Second Option">Second Option</mat-option>
+                </mat-select>
                 <mat-error>{{getErrorProductField()}}</mat-error>
             </mat-form-field>
         </div>
