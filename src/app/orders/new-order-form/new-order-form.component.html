@@ -57,26 +57,35 @@
         <div class="DateOrderRequiredShipped">
             <mat-form-field appearance="fill">
                 <mat-label>Order Date</mat-label>
-                <input matInput [formControl]="form.controls.OrderDate"/>
+                <input matInput [matDatepicker]="orderPicker" [formControl]="form.controls.OrderDate"/>
+                <mat-datepicker #orderPicker></mat-datepicker>
+                <mat-datepicker-toggle matPrefix [for]="orderPicker"></mat-datepicker-toggle>
                 <mat-error>{{getErrorOrderDateField()}}</mat-error>
             </mat-form-field>
 
             <mat-form-field appearance="fill">
                 <mat-label>Required Date</mat-label>
-                <input matInput [formControl]="form.controls.RequiredDate"/>
+                <input matInput [matDatepicker]="requiredPicker" [formControl]="form.controls.RequiredDate"/>
+                <mat-datepicker #requiredPicker></mat-datepicker>
+                <mat-datepicker-toggle matPrefix [for]="requiredPicker"></mat-datepicker-toggle>
                 <mat-error>{{getErrorRequiredDateField()}}</mat-error>
             </mat-form-field>
 
             <mat-form-field appearance="fill">
                 <mat-label>Shipped Date</mat-label>
-                <input matInput [formControl]="form.controls.ShippedDate"/>
+                <input matInput [matDatepicker]="shippedPicker" [formControl]="form.controls.ShippedDate"/>
+                <mat-datepicker #shippedPicker></mat-datepicker>
+                <mat-datepicker-toggle matPrefix [for]="shippedPicker"></mat-datepicker-toggle>
                 <mat-error>{{getErrorShippedDateField()}}</mat-error>
             </mat-form-field>
         </div>
 
         <div class="Freight">
             <mat-form-field appearance="fill">
-                <mat-label>Freight</mat-label>
+                <mat-label>
+                    <mat-icon>attach_money</mat-icon>
+                    Freight
+                </mat-label>
                 <input matInput [formControl]="form.controls.Freight"/>
                 <mat-error>{{getErrorFreightField()}}</mat-error>
             </mat-form-field>
@@ -99,7 +108,10 @@
 
         <div class="UnitPriceQuantityDiscount">
             <mat-form-field appearance="fill">
-                <mat-label>Unit Price</mat-label>
+                <mat-label>
+                    <mat-icon>attach_money</mat-icon>
+                    Unit Price
+                </mat-label>
                 <input matInput [formControl]="form.controls.UnitPrice"/>
                 <mat-error>{{getErrorUnitPriceField()}}</mat-error>
             </mat-form-field>
@@ -118,8 +130,8 @@
         </div>
         
         <div class="FormButtons">
-            <a mat-stroked-button type="button" routerLink="">Cancel</a>
-            <button mat-flat-button type="submit" [disabled]="form.invalid">Save Changes</button>
+            <a mat-button type="button" routerLink="" style="color: green;">CLOSE</a>
+            <button mat-button type="submit" [disabled]="form.invalid" style="color: green;">SAVE</button>
         </div>
     </div>
 </form>

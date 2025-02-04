@@ -1,15 +1,18 @@
 import { Component, inject } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
 import {MatButtonModule} from '@angular/material/button';
+import {MatIconModule} from '@angular/material/icon';
 import {MatSelectModule} from '@angular/material/select'
+import {MatDatepickerModule} from '@angular/material/datepicker';
 import { RouterLink } from '@angular/router';
 import { firstCapitalLetter } from '../../shared/functions/validations';
 
 @Component({
   selector: 'app-new-order-form',
-  imports: [MatFormFieldModule, MatInputModule, ReactiveFormsModule, MatButtonModule, RouterLink, MatSelectModule],
+  imports: [MatFormFieldModule, MatInputModule, ReactiveFormsModule, MatButtonModule, RouterLink, MatSelectModule, 
+    MatDatepickerModule, MatIconModule],
   templateUrl: './new-order-form.component.html',
   styleUrl: './new-order-form.component.css'
 })
@@ -22,9 +25,15 @@ export class NewOrderFormComponent {
     ShipAddress:['', {validators:[Validators.required]}],
     ShipCity:['',{validators:[Validators.required]}],
     ShipCountry: ['', {validators:[Validators.required]}],
-    OrderDate:['',{validators:[Validators.required]}],
-    RequiredDate:['',{validators:[Validators.required]}],
-    ShippedDate:['',{validators:[Validators.required]}],
+    OrderDate: new FormControl<Date | null>(null, {
+      validators:[Validators.required]
+    }),
+    RequiredDate: new FormControl< Date | null> (null, {
+      validators: [Validators.required]
+    }),
+    ShippedDate: new FormControl <Date | null>(null, {
+      validators: [Validators.required]
+    }),
     Freight:['', {validators:[Validators.required]}],
     Product : ['', {validators: [Validators.required]}],
     UnitPrice : ['', {validators: [Validators.required]}],
