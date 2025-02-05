@@ -1,0 +1,9 @@
+<form [formGroup]="form" class="filterContainer">
+    <mat-form-field appearance="fill">
+        <mat-label>
+            Customer Name
+        </mat-label>
+        <input matInput [formControl]="form.controls.customerName"/>
+    </mat-form-field>
+    <mat-icon style="color: gray;">search</mat-icon>
+</form>

@@ -1,5 +1,13 @@
 <h2>Orders prediction Index</h2>
 
+<div class="ordersTitleFilter">
+    <h3>Customers</h3>
+
+    <div class="filterForm">
+        <app-orders-filter></app-orders-filter>
+    </div>
+</div>
+
 <div class="mat-elevation-z8">
     <table mat-table [dataSource]="dataSource" matSort>
         <ng-container matColumnDef="customerName">

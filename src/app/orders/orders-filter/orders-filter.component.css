@@ -1,0 +1,13 @@
+::ng-deep .mdc-text-field--filled:not(.mdc-text-field--disabled) {
+    background-color: white !important;
+}
+
+mat-form-field {
+    width: 100%;
+}
+
+.filterContainer{
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
