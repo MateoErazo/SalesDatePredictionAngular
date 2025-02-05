@@ -3,11 +3,12 @@ import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import {MatSortModule, MatSort} from '@angular/material/sort';
 import {MatButtonModule} from '@angular/material/button';
 import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
+import { OrdersFilterComponent } from "../orders-filter/orders-filter.component";
 
 
 @Component({
   selector: 'app-orders-prediction-index',
-  imports: [MatTableModule, MatPaginatorModule, MatButtonModule, MatSortModule],
+  imports: [MatTableModule, MatPaginatorModule, MatButtonModule, MatSortModule, OrdersFilterComponent],
   templateUrl: './orders-prediction-index.component.html',
   styleUrl: './orders-prediction-index.component.css'
 })

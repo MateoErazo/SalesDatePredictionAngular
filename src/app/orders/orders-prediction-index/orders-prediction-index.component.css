@@ -4,5 +4,16 @@ table {
 
 th.mat-column-nextPredictedOrder,
 td.mat-column-nextPredictedOrder {
-    width: 35%; /* Adjust as needed */
+    width: 35%;
+}
+
+.ordersTitleFilter {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+}
+
+.filterForm{
+    width: 100%;
+    max-width: 740px;
 }
