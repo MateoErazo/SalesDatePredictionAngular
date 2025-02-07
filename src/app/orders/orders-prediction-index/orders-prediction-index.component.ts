@@ -1,18 +1,31 @@
-import { Component, AfterViewInit, ViewChild } from '@angular/core';
+import { Component, AfterViewInit, ViewChild, inject } from '@angular/core';
 import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import {MatSortModule, MatSort} from '@angular/material/sort';
 import {MatButtonModule} from '@angular/material/button';
 import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
 import { OrdersFilterComponent } from "../orders-filter/orders-filter.component";
+import {MatDialog, MAT_DIALOG_DATA, MatDialogActions,MatDialogClose,MatDialogContent,MatDialogRef, 
+      MatDialogTitle} from '@angular/material/dialog';
+import { NewOrderFormComponent } from '../new-order-form/new-order-form.component';
+import { OrdersService } from '../services/orders.service';
 
 
 @Component({
   selector: 'app-orders-prediction-index',
-  imports: [MatTableModule, MatPaginatorModule, MatButtonModule, MatSortModule, OrdersFilterComponent],
+  imports: [MatTableModule, MatPaginatorModule, MatButtonModule, MatSortModule, OrdersFilterComponent,
+  MatDialogActions,MatDialogClose,MatDialogContent, MatDialogTitle],
   templateUrl: './orders-prediction-index.component.html',
   styleUrl: './orders-prediction-index.component.css'
 })
 export class OrdersPredictionIndexComponent implements AfterViewInit {
+  readonly dialog = inject(MatDialog)
+  readonly ordersService = inject(OrdersService)
+
+  constructor (){
+    const orders = this.ordersService.getAllCustomerOrderPredictions()
+    console.log(orders)
+  }
+
   displayedColumns: string[] = ['customerName','lastOrderDate','nextPredictedOrder','viewOrders', 'newOrder'];
   dataSource = new MatTableDataSource<CustomerOrder>(CUSTOMER_DATA);
 
@@ -28,8 +41,12 @@ export class OrdersPredictionIndexComponent implements AfterViewInit {
     console.log('customer order:', order)
   }
 
-  newOrderHandler(order: CustomerOrder){
-    console.log('new order:', order)
+  newOrderOpenDialog(customerOrder: CustomerOrder):void{
+    const dialogRef = this.dialog.open(NewOrderFormComponent, {
+      data: customerOrder,
+      width: '90%'
+    })
+
   }
 }
 
@@ -38,6 +55,7 @@ export interface CustomerOrder{
   lastOrderDate : string,
   nextPredictedOrder: string
 }
+
 const CUSTOMER_DATA: CustomerOrder[] = [
   {customerName: 'Customer A', lastOrderDate: '2025-01-01', nextPredictedOrder: '2025-01-10'},
   {customerName: 'Customer B', lastOrderDate: '2024-01-01', nextPredictedOrder: '2025-01-10'},
