@@ -25,23 +25,24 @@ hr {
     align-items: center;
     background: rgb(73, 157, 57);
     width: 100%;
-    max-width: 533px;
     height: 50px;
     border:2px solid gray;
-    padding-left: 16px;
 }
 
 .FormTitle p {
+    padding-left: 16px;
     color: white;
 }
 
 .FormContainer {
+    padding: 0 2%;
+    padding-bottom: 16px;
+}
+
+.GeneralContainer{
     border: 2px solid grey;
     max-width: 500px;
     width: 100%;
-    padding: 0 2%;
-    padding-bottom: 16px;
-    margin-bottom: 8rem;
 }
 
 .EmployeeShipper {
@@ -95,4 +96,8 @@ hr {
     gap: 16px;
     max-width: 500px;
     margin-top: 2rem;
+}
+
+mat-label{
+    font-size: 14px;
 }

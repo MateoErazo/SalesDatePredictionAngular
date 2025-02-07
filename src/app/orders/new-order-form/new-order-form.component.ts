@@ -8,15 +8,21 @@ import {MatSelectModule} from '@angular/material/select'
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import { RouterLink } from '@angular/router';
 import { firstCapitalLetter } from '../../shared/functions/validations';
+import {MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import { CustomerOrder } from '../orders-prediction-index/orders-prediction-index.component';
 
 @Component({
   selector: 'app-new-order-form',
   imports: [MatFormFieldModule, MatInputModule, ReactiveFormsModule, MatButtonModule, RouterLink, MatSelectModule, 
-    MatDatepickerModule, MatIconModule],
+    MatDatepickerModule, MatIconModule, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose],
   templateUrl: './new-order-form.component.html',
   styleUrl: './new-order-form.component.css'
 })
 export class NewOrderFormComponent {
+
+  readonly dialogRef = inject(MatDialogRef<NewOrderFormComponent>);
+  readonly data = inject<CustomerOrder>(MAT_DIALOG_DATA)
+
   private formBuilder = inject(FormBuilder);
   form = this.formBuilder.group({
     Employee: ['', {validators:[Validators.required, firstCapitalLetter()]}],
@@ -40,6 +46,10 @@ export class NewOrderFormComponent {
     Quantity : ['', {validators: [Validators.required]}],
     Discount : ['', {validators: [Validators.required]}],
   })
+
+  onNoClick(): void{
+    this.dialogRef.close()
+  }
 
   getErrorEmployeeField (): string {
     let employee = this.form.controls.Employee
