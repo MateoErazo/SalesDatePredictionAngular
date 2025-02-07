@@ -22,8 +22,9 @@ export class OrdersPredictionIndexComponent implements AfterViewInit {
   readonly ordersService = inject(OrdersService)
 
   constructor (){
-    const orders = this.ordersService.getAllCustomerOrderPredictions()
-    console.log(orders)
+    const orders = this.ordersService.getAllCustomerOrderPredictions().subscribe(orders => {
+      console.log(orders)
+    })
   }
 
   displayedColumns: string[] = ['customerName','lastOrderDate','nextPredictedOrder','viewOrders', 'newOrder'];
