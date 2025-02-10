@@ -12,8 +12,7 @@ import { OrdersService } from '../services/orders.service';
 
 @Component({
   selector: 'app-orders-prediction-index',
-  imports: [MatTableModule, MatPaginatorModule, MatButtonModule, MatSortModule, OrdersFilterComponent,
-  MatDialogActions,MatDialogClose,MatDialogContent, MatDialogTitle],
+  imports: [MatTableModule, MatPaginatorModule, MatButtonModule, MatSortModule, OrdersFilterComponent],
   templateUrl: './orders-prediction-index.component.html',
   styleUrl: './orders-prediction-index.component.css'
 })

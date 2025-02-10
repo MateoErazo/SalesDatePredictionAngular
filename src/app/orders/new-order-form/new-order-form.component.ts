@@ -13,8 +13,8 @@ import { CustomerOrder } from '../orders-prediction-index/orders-prediction-inde
 
 @Component({
   selector: 'app-new-order-form',
-  imports: [MatFormFieldModule, MatInputModule, ReactiveFormsModule, MatButtonModule, RouterLink, MatSelectModule, 
-    MatDatepickerModule, MatIconModule, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose],
+  imports: [MatFormFieldModule, MatInputModule, ReactiveFormsModule, MatButtonModule, MatSelectModule, 
+    MatDatepickerModule, MatIconModule, MatDialogTitle, MatDialogContent, MatDialogActions],
   templateUrl: './new-order-form.component.html',
   styleUrl: './new-order-form.component.css'
 })
