@@ -6,10 +6,12 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatIconModule} from '@angular/material/icon';
 import {MatSelectModule} from '@angular/material/select'
 import {MatDatepickerModule} from '@angular/material/datepicker';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { firstCapitalLetter } from '../../shared/functions/validations';
 import {MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import { CustomerOrder } from '../orders-prediction-index/orders-prediction-index.component';
+import { OrdersService } from '../services/orders.service';
+import { OrderCreationDTO } from '../DTO/OrderCreationDTO';
 
 @Component({
   selector: 'app-new-order-form',
@@ -20,6 +22,8 @@ import { CustomerOrder } from '../orders-prediction-index/orders-prediction-inde
 })
 export class NewOrderFormComponent {
 
+  private router = inject(Router)
+  private ordersService = inject(OrdersService)
   readonly dialogRef = inject(MatDialogRef<NewOrderFormComponent>);
   readonly data = inject<CustomerOrder>(MAT_DIALOG_DATA)
 
@@ -188,7 +192,15 @@ export class NewOrderFormComponent {
   }
 
   saveChanges(){
-    console.log(this.form.value)
+    let order = this.form.value as OrderCreationDTO
+    this.ordersService.addNewOrder(order).subscribe({
+      next: ()=>{
+        this.router.navigate([''])
+      },
+      error: err =>{
+        console.log(err)
+      }
+    });
   }
 
 
