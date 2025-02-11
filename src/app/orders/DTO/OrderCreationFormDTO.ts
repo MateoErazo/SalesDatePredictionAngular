@@ -1,4 +1,4 @@
-export interface OrderCreationDTO {
+export interface OrderCreationFormDTO {
     custid: number,
     empid: number,
     shipperid: number,
@@ -9,5 +9,9 @@ export interface OrderCreationDTO {
     orderdate: Date,
     requireddate: Date,
     shippeddate: Date,
-    freight: number
+    freight: number,
+    productid: number,
+    unitprice: number, 
+    qty: number, 
+    discount: number
 }

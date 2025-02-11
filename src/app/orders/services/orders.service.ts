@@ -3,7 +3,7 @@ import { CustomerOrderPredictionDTO } from '../DTO/CustomerOrderPredictionDTO';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment.development';
-import { OrderCreationDTO } from '../DTO/OrderCreationDTO';
+import { OrderWithProductCreationDTO } from '../DTO/OrderWithProductCreationDTO';
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +21,7 @@ export class OrdersService {
     return this.http.get<CustomerOrderPredictionDTO[]>(this.urlApi)
   }
 
-  public addNewOrder(order: OrderCreationDTO){
+  public addNewOrder(order: OrderWithProductCreationDTO){
     return this.http.post(this.newOrderUrlApi, order);
   }
 }
