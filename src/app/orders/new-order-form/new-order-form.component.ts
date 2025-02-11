@@ -12,6 +12,12 @@ import {MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose, MatD
 import { CustomerOrder } from '../orders-prediction-index/orders-prediction-index.component';
 import { OrdersService } from '../services/orders.service';
 import { OrderCreationDTO } from '../DTO/OrderCreationDTO';
+import { EmployeesService } from '../../employees/services/employees.service';
+import { EmployeeDTO } from '../../employees/DTO/EmployeeDTO';
+import { ShippersService } from '../../shippers/services/shippers.service';
+import { ShipperDTO } from '../../shippers/DTO/ShipperDTO';
+import { ProductsService } from '../../products/services/products.service';
+import { ProductDTO } from '../../products/DTO/ProductDTO';
 
 @Component({
   selector: 'app-new-order-form',
@@ -22,10 +28,23 @@ import { OrderCreationDTO } from '../DTO/OrderCreationDTO';
 })
 export class NewOrderFormComponent {
 
-  private router = inject(Router)
-  private ordersService = inject(OrdersService)
+  private router = inject(Router);
+  private productsService = inject(ProductsService)
+  private shippersService = inject(ShippersService)
+  private employeesService = inject(EmployeesService);
+  private ordersService = inject(OrdersService);
   readonly dialogRef = inject(MatDialogRef<NewOrderFormComponent>);
-  readonly data = inject<CustomerOrder>(MAT_DIALOG_DATA)
+  readonly data = inject<CustomerOrder>(MAT_DIALOG_DATA);
+  employeesData!: EmployeeDTO[];
+  shippersData!: ShipperDTO[];
+  productsData!: ProductDTO[];
+
+
+  constructor(){
+    this.loadEmployeesData();
+    this.loadShippersData();
+    this.loadProductsData();
+  }
 
   private formBuilder = inject(FormBuilder);
   form = this.formBuilder.group({
@@ -53,6 +72,39 @@ export class NewOrderFormComponent {
 
   onNoClick(): void{
     this.dialogRef.close()
+  }
+
+  saveChanges(){
+    let order = this.form.value as OrderCreationDTO
+    this.ordersService.addNewOrder(order).subscribe({
+      next: ()=>{
+        this.router.navigate([''])
+      },
+      error: err =>{
+        console.log(err)
+      }
+    });
+  }
+
+  loadEmployeesData() {
+    let employeesDataDb = this.employeesService.getAllEmployees().subscribe({
+      next: employees =>{this.employeesData = employees},
+      error: err =>{console.log(err)}
+    });
+  }
+
+  loadShippersData(){
+    this.shippersService.getAllShippers().subscribe({
+      next: shippers => {this.shippersData = shippers},
+      error: err => {console.log(err)}
+    });
+  }
+
+  loadProductsData(){
+    this.productsService.getAllProducts().subscribe({
+      next: products => {this.productsData = products},
+      error: err => {console.log(err)}
+    });
   }
 
   getErrorEmployeeField (): string {
@@ -190,19 +242,4 @@ export class NewOrderFormComponent {
     }
     return ''
   }
-
-  saveChanges(){
-    let order = this.form.value as OrderCreationDTO
-    this.ordersService.addNewOrder(order).subscribe({
-      next: ()=>{
-        this.router.navigate([''])
-      },
-      error: err =>{
-        console.log(err)
-      }
-    });
-  }
-
-
-
 }

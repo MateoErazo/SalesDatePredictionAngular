@@ -12,8 +12,9 @@
                     <mat-form-field appearance="fill">
                         <mat-label>Employee</mat-label>
                         <mat-select [formControl]="form.controls.Employee">
-                            <mat-option value="One">First Option</mat-option>
-                            <mat-option value="Two">Second Option</mat-option>
+                            @for (employee of employeesData; track $index) {
+                                <mat-option [value]="employee.fullName">{{employee.fullName}}</mat-option>
+                            }
                         </mat-select>
                         <mat-error>{{getErrorEmployeeField()}}</mat-error>
                     </mat-form-field>
@@ -21,8 +22,9 @@
                     <mat-form-field appearance="fill">
                         <mat-label>Shipper</mat-label>
                         <mat-select [formControl]="form.controls.Shipper">
-                            <mat-option value="One">First Option</mat-option>
-                            <mat-option value="Two">Second Option</mat-option>
+                            @for (shipper of shippersData; track $index) {
+                                <mat-option [value]="shipper.companyname">{{shipper.companyname}}</mat-option>
+                            }
                         </mat-select>
                         <mat-error>{{getErrorShipperField()}}</mat-error>
                     </mat-form-field>
@@ -100,8 +102,9 @@
                     <mat-form-field appearance="fill">
                         <mat-label>Product</mat-label>
                         <mat-select [formControl]="form.controls.Product">
-                            <mat-option value="First Option">First Option</mat-option>
-                            <mat-option value="Second Option">Second Option</mat-option>
+                            @for (product of productsData; track $index) {
+                                <mat-option [value]="product.productname">{{product.productname}}</mat-option>
+                            }
                         </mat-select>
                         <mat-error>{{getErrorProductField()}}</mat-error>
                     </mat-form-field>
