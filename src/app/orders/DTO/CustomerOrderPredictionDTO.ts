@@ -1,6 +1,6 @@
 export interface CustomerOrderPredictionDTO {
-    CustomerId: number,
-    CustomerName : string,
-    LastOrderDate : Date,
-    NextPredictedOrder: Date
+    customerId: number,
+    customerName : string,
+    lastOrderDate : Date,
+    nextPredictedOrder: Date
 }

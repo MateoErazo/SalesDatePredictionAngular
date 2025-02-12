@@ -6,10 +6,9 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatIconModule} from '@angular/material/icon';
 import {MatSelectModule} from '@angular/material/select'
 import {MatDatepickerModule} from '@angular/material/datepicker';
-import { Router, RouterLink } from '@angular/router';
+import { Router} from '@angular/router';
 import { firstCapitalLetter } from '../../shared/functions/validations';
 import {MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
-import { CustomerOrder } from '../orders-prediction-index/orders-prediction-index.component';
 import { OrdersService } from '../services/orders.service';
 import { OrderCreationDTO } from '../DTO/OrderCreationDTO';
 import { EmployeesService } from '../../employees/services/employees.service';
@@ -18,8 +17,10 @@ import { ShippersService } from '../../shippers/services/shippers.service';
 import { ShipperDTO } from '../../shippers/DTO/ShipperDTO';
 import { ProductsService } from '../../products/services/products.service';
 import { ProductDTO } from '../../products/DTO/ProductDTO';
-import { OrderCreationFormDTO } from '../DTO/OrderCreationFormDTO';
 import { OrderWithProductCreationDTO } from '../DTO/OrderWithProductCreationDTO';
+import { CustomerOrderPredictionDTO } from '../DTO/CustomerOrderPredictionDTO';
+import moment from 'moment';
+import { OrderCreationFormDTO } from '../DTO/OrderCreationFormDTO';
 
 @Component({
   selector: 'app-new-order-form',
@@ -36,7 +37,7 @@ export class NewOrderFormComponent {
   private employeesService = inject(EmployeesService);
   private ordersService = inject(OrdersService);
   readonly dialogRef = inject(MatDialogRef<NewOrderFormComponent>);
-  readonly data = inject<CustomerOrder>(MAT_DIALOG_DATA);
+  readonly data = inject<CustomerOrderPredictionDTO>(MAT_DIALOG_DATA);
   employeesData!: EmployeeDTO[];
   shippersData!: ShipperDTO[];
   productsData!: ProductDTO[];
@@ -50,7 +51,7 @@ export class NewOrderFormComponent {
 
   private formBuilder = inject(FormBuilder);
   form = this.formBuilder.group({
-    empid: [0, {validators:[Validators.required, firstCapitalLetter()]}],
+    empid: [0, {validators:[Validators.required]}],
     shipperid:[0,{validators:[Validators.required]}],
     shipname:['', {validators:[Validators.required]}],
     shipaddress:['', {validators:[Validators.required]}],
@@ -77,19 +78,47 @@ export class NewOrderFormComponent {
   }
 
   saveChanges(){
-    let orderCreationDTO = this.form.value as OrderCreationDTO;
-    orderCreationDTO.custid = 0; /////////
-    let orderWithProductCreationDTO = this.form.value as OrderWithProductCreationDTO;
-    orderWithProductCreationDTO.order = orderCreationDTO 
+    let formData: OrderCreationFormDTO = this.form.value as OrderCreationFormDTO;
 
-    this.ordersService.addNewOrder(orderWithProductCreationDTO).subscribe({
+    let order: OrderWithProductCreationDTO = this.buildOrderWithProductCreationDTO(formData)
+
+    console.log('order',order);
+
+    this.ordersService.addNewOrder(order).subscribe({
       next: ()=>{
-        this.router.navigate([''])
+        this.dialogRef.close()
       },
       error: err =>{
         console.log(err)
       }
     });
+  }
+
+  buildOrderWithProductCreationDTO(formData: OrderCreationFormDTO): OrderWithProductCreationDTO{
+    
+    const orderCreationDTO: OrderCreationDTO = {
+      custid: this.data.customerId,
+      empid: formData.empid,
+      shipperid: formData.shipperid,
+      shipname: formData.shipname,
+      shipaddress: formData.shipaddress,
+      shipcity: formData.shipcity,
+      shipcountry: formData.shipcountry,
+      orderdate: moment(formData.orderdate).toDate(),
+      requireddate: moment(formData.requireddate).toDate(),
+      shippeddate: moment(formData.shippeddate).toDate(),
+      freight: formData.freight
+    }
+
+    const orderWithProductCreationDTO : OrderWithProductCreationDTO = {
+      order: orderCreationDTO,
+      productid: formData.productid,
+      unitprice: formData.unitprice, 
+      qty: formData.qty, 
+      discount: formData.discount
+    }
+
+    return orderWithProductCreationDTO;
   }
 
   loadEmployeesData() {
