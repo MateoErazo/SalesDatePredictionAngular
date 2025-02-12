@@ -10,9 +10,9 @@ import { OrderWithProductCreationDTO } from '../DTO/OrderWithProductCreationDTO'
 })
 export class OrdersService {
 
-  private http = inject(HttpClient)
-  private urlApi = environment.apiBase + '/customers/order-predictions'
-  private newOrderUrlApi = environment.apiBase + '/customers'
+  private http = inject(HttpClient);
+  private urlApi = environment.apiBase + '/customers/order-predictions';
+  private newOrderUrlApi = environment.apiBase + '/orders';
 
   constructor() { }
 

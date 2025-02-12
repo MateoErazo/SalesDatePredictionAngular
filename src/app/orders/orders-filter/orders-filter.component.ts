@@ -1,10 +1,10 @@
-import { Component, inject, Input, input, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { CustomerOrder } from '../orders-prediction-index/orders-prediction-index.component';
 import { MatTableDataSource } from '@angular/material/table';
+import { CustomerOrderPredictionDTO } from '../DTO/CustomerOrderPredictionDTO';
 
 @Component({
   selector: 'app-orders-filter',
@@ -14,7 +14,7 @@ import { MatTableDataSource } from '@angular/material/table';
 })
 export class OrdersFilterComponent implements OnInit {
   ngOnInit(): void {
-    this.customerOrders.filterPredicate = (data: CustomerOrder, filter: string) => {
+    this.customerOrders.filterPredicate = (data: CustomerOrderPredictionDTO, filter: string) => {
       return data.customerName.toLowerCase().includes(filter)
     }
 
@@ -24,7 +24,7 @@ export class OrdersFilterComponent implements OnInit {
   }
 
   @Input({required:true})
-  customerOrders!: MatTableDataSource<CustomerOrder>
+  customerOrders!: MatTableDataSource<CustomerOrderPredictionDTO>
 
   private formBuilder = inject(FormBuilder)
   form = this.formBuilder.group({
