@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject} from '@angular/core';
 import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
@@ -6,9 +6,7 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatIconModule} from '@angular/material/icon';
 import {MatSelectModule} from '@angular/material/select'
 import {MatDatepickerModule} from '@angular/material/datepicker';
-import { Router} from '@angular/router';
-import { firstCapitalLetter } from '../../shared/functions/validations';
-import {MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import {MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import { OrdersService } from '../services/orders.service';
 import { OrderCreationDTO } from '../DTO/OrderCreationDTO';
 import { EmployeesService } from '../../employees/services/employees.service';
@@ -30,14 +28,13 @@ import { OrderCreationFormDTO } from '../DTO/OrderCreationFormDTO';
   styleUrl: './new-order-form.component.css'
 })
 export class NewOrderFormComponent {
-
-  private router = inject(Router);
   private productsService = inject(ProductsService)
   private shippersService = inject(ShippersService)
   private employeesService = inject(EmployeesService);
   private ordersService = inject(OrdersService);
   readonly dialogRef = inject(MatDialogRef<NewOrderFormComponent>);
   readonly data = inject<CustomerOrderPredictionDTO>(MAT_DIALOG_DATA);
+
   employeesData!: EmployeeDTO[];
   shippersData!: ShipperDTO[];
   productsData!: ProductDTO[];
@@ -82,14 +79,13 @@ export class NewOrderFormComponent {
 
     let order: OrderWithProductCreationDTO = this.buildOrderWithProductCreationDTO(formData)
 
-    console.log('order',order);
-
     this.ordersService.addNewOrder(order).subscribe({
       next: ()=>{
-        this.dialogRef.close()
+        this.dialogRef.close("The order was created successfully."); 
       },
       error: err =>{
         console.log(err)
+        this.dialogRef.close("The order wasn't created. Please try again."); 
       }
     });
   }
