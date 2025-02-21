@@ -34,7 +34,6 @@ export class OrdersPredictionIndexComponent implements AfterViewInit {
     this.loadOrdersData()
   }
 
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
   updatePagination(data: PageEvent){
@@ -61,7 +60,6 @@ export class OrdersPredictionIndexComponent implements AfterViewInit {
   }
   
   ngAfterViewInit(): void {
-    this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
 
