@@ -42,13 +42,11 @@ export class OrdersPredictionIndexComponent implements AfterViewInit {
   }
 
   loadOrdersData () {
-    const orders = this.ordersService.getOrderPredictionsPaginated(this.pagination).subscribe((response: HttpResponse<CustomerOrderPredictionDTO[]>) => {
+      this.ordersService.getOrderPredictionsPaginated(this.pagination).subscribe((response: HttpResponse<CustomerOrderPredictionDTO[]>) => {
       this.orderPredictions = response.body as CustomerOrderPredictionDTO[]
       this.dataSource.data = response.body as CustomerOrderPredictionDTO[]
       const header = response.headers.get("total-records-amount") as string;
       this.totalRecordsAmount = parseInt(header,10);
-      console.log('TotalRecorsAmount',this.totalRecordsAmount)
-      console.log('Pagination',this.pagination)
     })
   }
 
