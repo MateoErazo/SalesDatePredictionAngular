@@ -19,6 +19,7 @@ import { OrderWithProductCreationDTO } from '../DTO/OrderWithProductCreationDTO'
 import { CustomerOrderPredictionDTO } from '../DTO/CustomerOrderPredictionDTO';
 import moment from 'moment';
 import { OrderCreationFormDTO } from '../DTO/OrderCreationFormDTO';
+import { getErrors } from '../../shared/functions/getErrors';
 
 @Component({
   selector: 'app-new-order-form',
@@ -28,6 +29,7 @@ import { OrderCreationFormDTO } from '../DTO/OrderCreationFormDTO';
   styleUrl: './new-order-form.component.css'
 })
 export class NewOrderFormComponent {
+  errors:string[] = [];
   private productsService = inject(ProductsService)
   private shippersService = inject(ShippersService)
   private employeesService = inject(EmployeesService);
@@ -84,7 +86,9 @@ export class NewOrderFormComponent {
         this.dialogRef.close("The order was created successfully."); 
       },
       error: err =>{
-        console.log(err)
+        const errors = getErrors(err)
+        this.errors = errors
+        console.log(this.errors)
         this.dialogRef.close("The order wasn't created. Please try again."); 
       }
     });

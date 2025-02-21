@@ -1,9 +1,11 @@
 import { inject, Injectable } from '@angular/core';
 import { CustomerOrderPredictionDTO } from '../DTO/CustomerOrderPredictionDTO';
 import { Observable } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { environment } from '../../../environments/environment.development';
 import { OrderWithProductCreationDTO } from '../DTO/OrderWithProductCreationDTO';
+import { PaginationDTO } from '../../shared/models/paginationDTO';
+import { BuildQueryParams } from '../../shared/functions/buildQueryParams';
 
 @Injectable({
   providedIn: 'root'
@@ -16,9 +18,9 @@ export class OrdersService {
 
   constructor() { }
 
-  public getAllCustomerOrderPredictions(): Observable<CustomerOrderPredictionDTO[]> {
-
-    return this.http.get<CustomerOrderPredictionDTO[]>(this.urlApi)
+  public getOrderPredictionsPaginated(pagination: PaginationDTO): Observable<HttpResponse<CustomerOrderPredictionDTO[]>> {
+    let queryParams = BuildQueryParams(pagination);
+    return this.http.get<CustomerOrderPredictionDTO[]>(this.urlApi,{params: queryParams, observe:'response'})
   }
 
   public addNewOrder(order: OrderWithProductCreationDTO){

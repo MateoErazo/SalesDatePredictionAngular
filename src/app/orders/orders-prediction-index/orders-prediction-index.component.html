@@ -43,9 +43,13 @@
         <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
     </table>
 
-    <mat-paginator 
-    [pageSizeOptions]="[5, 10, 20]"
-    showFirstLastButtons
+    <mat-paginator
+    showFirstLastButtons 
+    [length]="totalRecordsAmount"
+    [pageSize]="pagination.pageSize"
+    [pageSizeOptions]="[5, 10, 50]"
+    (page)="updatePagination($event)"
+    class="mat-elevation-z8"
     aria-label="Select page of customer orders">
     </mat-paginator>
 </div>
