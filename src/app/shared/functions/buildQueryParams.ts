@@ -5,7 +5,9 @@ export function BuildQueryParams(obj: any): HttpParams{
 
     for(let property in obj){
         if(obj.hasOwnProperty(property)){
-            queryParams = queryParams.append(property, obj[property])
+            if(obj[property] != ''){
+                queryParams = queryParams.append(property, obj[property])
+            }
         }
     }
 
