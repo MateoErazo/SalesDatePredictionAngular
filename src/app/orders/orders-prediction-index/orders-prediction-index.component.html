@@ -4,7 +4,7 @@
     <h3>Customers</h3>
 
     <div class="filterForm">
-        <app-orders-filter [customerOrders]="dataSource"></app-orders-filter>
+        <app-orders-filter (filterValue)="filterValueHandler($event)"></app-orders-filter>
     </div>
 </div>
 
@@ -46,7 +46,8 @@
     <mat-paginator
     showFirstLastButtons 
     [length]="totalRecordsAmount"
-    [pageSize]="pagination.pageSize"
+    [pageIndex]="currentPageIndex"
+    [pageSize]="ordersFilter.pageSize"
     [pageSizeOptions]="[5, 10, 50]"
     (page)="updatePagination($event)"
     class="mat-elevation-z8"
