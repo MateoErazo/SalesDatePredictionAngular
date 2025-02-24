@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, ViewChild, inject} from '@angular/core';
+import { Component, AfterViewInit, ViewChild, inject, OnInit} from '@angular/core';
 import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import {MatSortModule, MatSort} from '@angular/material/sort';
 import {MatButtonModule} from '@angular/material/button';
@@ -11,42 +11,60 @@ import { OrdersService } from '../services/orders.service';
 import { CustomerOrderPredictionDTO } from '../DTO/CustomerOrderPredictionDTO';
 import { HttpResponse } from '@angular/common/http';
 import { OrderPredictionFilterDTO } from '../DTO/OrderPredictionFilterDTO';
+import { DatePipe, Location } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
 
 
 @Component({
   selector: 'app-orders-prediction-index',
-  imports: [MatTableModule, MatPaginatorModule, MatButtonModule, MatSortModule, OrdersFilterComponent],
+  imports: [MatTableModule, MatPaginatorModule, MatButtonModule, MatSortModule, OrdersFilterComponent, DatePipe],
   templateUrl: './orders-prediction-index.component.html',
   styleUrl: './orders-prediction-index.component.css'
 })
-export class OrdersPredictionIndexComponent implements AfterViewInit {
+export class OrdersPredictionIndexComponent implements OnInit, AfterViewInit {
 
-  readonly dialog = inject(MatDialog)
-  readonly ordersService = inject(OrdersService)
+  private dialog = inject(MatDialog)
+  private ordersService = inject(OrdersService)
+  private locationService = inject(Location)
+  private activatedRouteService = inject(ActivatedRoute)
   private _snackBar = inject(MatSnackBar);
   displayedColumns: string[] = ['customerName','lastOrderDate','nextPredictedOrder','viewOrders', 'newOrder'];
   dataSource = new MatTableDataSource<CustomerOrderPredictionDTO>();
   totalRecordsAmount!: number
-  ordersFilter: OrderPredictionFilterDTO = {
+  pagesAmount!:number
+  orderFilters: OrderPredictionFilterDTO = {
     page:1, 
     pageSize:5, 
     customerName:''
   }
 
-  constructor (){
-    this.loadOrdersData()
-  }
-
   @ViewChild(MatSort) sort!: MatSort;
 
+  ngOnInit(): void {
+
+    this.readQueryStringsFromUrl()
+
+    if(this.orderFilters.customerName == '' || this.orderFilters.customerName == undefined){
+      this.loadOrdersData()
+    }else{
+      this.getFilteredOrders()
+    }
+  }
+
+  ngAfterViewInit(): void {
+    this.dataSource.sort = this.sort;
+  }
+
   updatePagination(data: PageEvent){
-    this.ordersFilter = {
+    this.orderFilters = {
       page: data.pageIndex + 1, 
       pageSize: data.pageSize, 
-      customerName:this.ordersFilter.customerName
+      customerName:this.orderFilters.customerName
     }
 
-    if(this.ordersFilter.customerName == ''){
+    this.writeOrderFiltersInUrl(this.orderFilters)
+
+    if(this.orderFilters.customerName == ''){
       this.loadOrdersData()
     }else{
       this.getFilteredOrders()
@@ -54,18 +72,41 @@ export class OrdersPredictionIndexComponent implements AfterViewInit {
   }
 
   loadOrdersData () {
-      this.ordersService.getOrderPredictionsPaginated(this.ordersFilter).subscribe((response: HttpResponse<CustomerOrderPredictionDTO[]>) => {
+      this.ordersService.getOrderPredictionsPaginated(this.orderFilters).subscribe((response: HttpResponse<CustomerOrderPredictionDTO[]>) => {
       this.dataSource.data = response.body as CustomerOrderPredictionDTO[]
-      const header = response.headers.get("total-records-amount") as string;
-      this.totalRecordsAmount = parseInt(header,10);
+      if(this.dataSource.data.length == 0){
+        this.orderFilters = {
+          page:1,
+          pageSize:this.orderFilters.pageSize,
+          customerName:''
+        }
+    
+        this.writeOrderFiltersInUrl(this.orderFilters)
+        this.loadOrdersData()
+      }
+
+      const recordsHeader = response.headers.get("total-records-amount") as string;
+      this.totalRecordsAmount = parseInt(recordsHeader,10);
     })
   }
 
   getFilteredOrders() {
-      this.ordersService.getOrderPredictionsFiltered(this.ordersFilter).subscribe((response: HttpResponse<CustomerOrderPredictionDTO[]>) => {
+      this.ordersService.getOrderPredictionsFiltered(this.orderFilters).subscribe((response: HttpResponse<CustomerOrderPredictionDTO[]>) => {
       this.dataSource.data = response.body as CustomerOrderPredictionDTO[]
-      const header = response.headers.get("total-records-amount") as string;
-      this.totalRecordsAmount = parseInt(header,10);
+
+      if(this.dataSource.data.length == 0){
+        this.orderFilters = {
+          page:1,
+          pageSize:this.orderFilters.pageSize,
+          customerName:this.orderFilters.customerName
+        }
+    
+        this.writeOrderFiltersInUrl(this.orderFilters)
+        this.getFilteredOrders()
+      }
+
+      const recordsHeader = response.headers.get("total-records-amount") as string;
+      this.totalRecordsAmount = parseInt(recordsHeader,10);
     })
   }
 
@@ -74,10 +115,6 @@ export class OrdersPredictionIndexComponent implements AfterViewInit {
       duration: 4000,
       panelClass:['green-snackbar']
     });
-  }
-  
-  ngAfterViewInit(): void {
-    this.dataSource.sort = this.sort;
   }
 
   viewOrderHandler(order : CustomerOrderPredictionDTO){
@@ -98,12 +135,13 @@ export class OrdersPredictionIndexComponent implements AfterViewInit {
   }
 
   filterValueHandler(filterValue: string) {
-
-    this.ordersFilter = {
+    this.orderFilters = {
       page:1,
-      pageSize:this.ordersFilter.pageSize,
+      pageSize:this.orderFilters.pageSize,
       customerName:filterValue
     }
+
+    this.writeOrderFiltersInUrl(this.orderFilters)
 
     if(filterValue != ''){
       this.getFilteredOrders();
@@ -113,6 +151,55 @@ export class OrdersPredictionIndexComponent implements AfterViewInit {
   }
 
   get currentPageIndex(): number{
-    return this.ordersFilter.page - 1;
+    return this.orderFilters.page - 1;
+  }
+
+  writeOrderFiltersInUrl(filterValues: OrderPredictionFilterDTO){
+    let queryStrings = []
+
+    if(filterValues.customerName){
+      queryStrings.push(`customerName=${encodeURIComponent(filterValues.customerName)}`);
+    }
+
+    if(filterValues.page !== 0){
+      queryStrings.push(`page=${encodeURIComponent(filterValues.page)}`);
+    }
+
+    if(filterValues.pageSize !== 0){
+      queryStrings.push(`pageSize=${encodeURIComponent(filterValues.pageSize)}`)
+    }
+
+    this.locationService.replaceState('', queryStrings.join('&'));
+  }
+
+  readQueryStringsFromUrl(){
+    this.activatedRouteService.queryParams.subscribe( (params:any) => {
+      var object : any = {}
+
+      if(params.customerName){
+        object.customerName = params.customerName
+      }else{
+        object.customerName = ''
+      }
+
+      if(params.page){
+        object.page = params.page
+      }else{
+        object.page = this.orderFilters.page
+      }
+
+      if(params.pageSize){
+        object.pageSize = params.pageSize
+      }else{
+        object.pageSize = this.orderFilters.pageSize
+      }
+
+      this.orderFilters = object as OrderPredictionFilterDTO;
+    });
+    
+  }
+
+  get customerName(): string{
+    return this.orderFilters.customerName
   }
 }
