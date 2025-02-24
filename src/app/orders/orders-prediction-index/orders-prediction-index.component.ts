@@ -2,7 +2,7 @@ import { Component, AfterViewInit, ViewChild, inject} from '@angular/core';
 import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import {MatSortModule, MatSort} from '@angular/material/sort';
 import {MatButtonModule} from '@angular/material/button';
-import {MatPaginator, MatPaginatorModule, PageEvent} from '@angular/material/paginator';
+import {MatPaginatorModule, PageEvent} from '@angular/material/paginator';
 import { OrdersFilterComponent } from "../orders-filter/orders-filter.component";
 import {MatDialog} from '@angular/material/dialog';
 import {MatSnackBar} from '@angular/material/snack-bar';
@@ -10,7 +10,7 @@ import { NewOrderFormComponent } from '../new-order-form/new-order-form.componen
 import { OrdersService } from '../services/orders.service';
 import { CustomerOrderPredictionDTO } from '../DTO/CustomerOrderPredictionDTO';
 import { HttpResponse } from '@angular/common/http';
-import { PaginationDTO } from '../../shared/models/paginationDTO';
+import { OrderPredictionFilterDTO } from '../DTO/OrderPredictionFilterDTO';
 
 
 @Component({
@@ -24,11 +24,14 @@ export class OrdersPredictionIndexComponent implements AfterViewInit {
   readonly dialog = inject(MatDialog)
   readonly ordersService = inject(OrdersService)
   private _snackBar = inject(MatSnackBar);
-  orderPredictions!: CustomerOrderPredictionDTO[]
-  pagination: PaginationDTO = {page:1, pageSize:5}
   displayedColumns: string[] = ['customerName','lastOrderDate','nextPredictedOrder','viewOrders', 'newOrder'];
-  dataSource = new MatTableDataSource<CustomerOrderPredictionDTO>(this.orderPredictions);
+  dataSource = new MatTableDataSource<CustomerOrderPredictionDTO>();
   totalRecordsAmount!: number
+  ordersFilter: OrderPredictionFilterDTO = {
+    page:1, 
+    pageSize:5, 
+    customerName:''
+  }
 
   constructor (){
     this.loadOrdersData()
@@ -37,13 +40,29 @@ export class OrdersPredictionIndexComponent implements AfterViewInit {
   @ViewChild(MatSort) sort!: MatSort;
 
   updatePagination(data: PageEvent){
-    this.pagination = {page: data.pageIndex + 1, pageSize: data.pageSize}
-    this.loadOrdersData()
+    this.ordersFilter = {
+      page: data.pageIndex + 1, 
+      pageSize: data.pageSize, 
+      customerName:this.ordersFilter.customerName
+    }
+
+    if(this.ordersFilter.customerName == ''){
+      this.loadOrdersData()
+    }else{
+      this.getFilteredOrders()
+    }
   }
 
   loadOrdersData () {
-      this.ordersService.getOrderPredictionsPaginated(this.pagination).subscribe((response: HttpResponse<CustomerOrderPredictionDTO[]>) => {
-      this.orderPredictions = response.body as CustomerOrderPredictionDTO[]
+      this.ordersService.getOrderPredictionsPaginated(this.ordersFilter).subscribe((response: HttpResponse<CustomerOrderPredictionDTO[]>) => {
+      this.dataSource.data = response.body as CustomerOrderPredictionDTO[]
+      const header = response.headers.get("total-records-amount") as string;
+      this.totalRecordsAmount = parseInt(header,10);
+    })
+  }
+
+  getFilteredOrders() {
+      this.ordersService.getOrderPredictionsFiltered(this.ordersFilter).subscribe((response: HttpResponse<CustomerOrderPredictionDTO[]>) => {
       this.dataSource.data = response.body as CustomerOrderPredictionDTO[]
       const header = response.headers.get("total-records-amount") as string;
       this.totalRecordsAmount = parseInt(header,10);
@@ -76,5 +95,24 @@ export class OrdersPredictionIndexComponent implements AfterViewInit {
         this.showMessageStatus(result,"Ok")
       }
     });
+  }
+
+  filterValueHandler(filterValue: string) {
+
+    this.ordersFilter = {
+      page:1,
+      pageSize:this.ordersFilter.pageSize,
+      customerName:filterValue
+    }
+
+    if(filterValue != ''){
+      this.getFilteredOrders();
+    }else{
+      this.loadOrdersData();
+    }
+  }
+
+  get currentPageIndex(): number{
+    return this.ordersFilter.page - 1;
   }
 }
