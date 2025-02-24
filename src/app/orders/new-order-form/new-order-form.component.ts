@@ -1,4 +1,4 @@
-import { Component, inject} from '@angular/core';
+import { Component, inject, OnInit} from '@angular/core';
 import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
@@ -28,7 +28,7 @@ import { getErrors } from '../../shared/functions/getErrors';
   templateUrl: './new-order-form.component.html',
   styleUrl: './new-order-form.component.css'
 })
-export class NewOrderFormComponent {
+export class NewOrderFormComponent implements OnInit{
   errors:string[] = [];
   private productsService = inject(ProductsService)
   private shippersService = inject(ShippersService)
@@ -41,8 +41,7 @@ export class NewOrderFormComponent {
   shippersData!: ShipperDTO[];
   productsData!: ProductDTO[];
 
-
-  constructor(){
+  ngOnInit(): void {
     this.loadEmployeesData();
     this.loadShippersData();
     this.loadProductsData();
