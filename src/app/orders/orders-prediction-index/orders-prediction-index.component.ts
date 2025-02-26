@@ -37,6 +37,7 @@ export class OrdersPredictionIndexComponent implements OnInit, AfterViewInit {
     pageSize:5, 
     customerName:''
   }
+  apiCallretryAmount: number = 0;
 
   @ViewChild(MatSort) sort!: MatSort;
 
@@ -56,6 +57,7 @@ export class OrdersPredictionIndexComponent implements OnInit, AfterViewInit {
   }
 
   updatePagination(data: PageEvent){
+
     this.orderFilters = {
       page: data.pageIndex + 1, 
       pageSize: data.pageSize, 
@@ -72,6 +74,12 @@ export class OrdersPredictionIndexComponent implements OnInit, AfterViewInit {
   }
 
   loadOrdersData () {
+
+      if(this.apiCallretryAmount > 1){
+        this.apiCallretryAmount = 0;
+        return;
+      }
+
       this.ordersService.getOrderPredictionsPaginated(this.orderFilters).subscribe((response: HttpResponse<CustomerOrderPredictionDTO[]>) => {
       this.dataSource.data = response.body as CustomerOrderPredictionDTO[]
       if(this.dataSource.data.length == 0){
@@ -82,6 +90,8 @@ export class OrdersPredictionIndexComponent implements OnInit, AfterViewInit {
         }
     
         this.writeOrderFiltersInUrl(this.orderFilters)
+
+        this.apiCallretryAmount++;
         this.loadOrdersData()
       }
 
@@ -91,10 +101,17 @@ export class OrdersPredictionIndexComponent implements OnInit, AfterViewInit {
   }
 
   getFilteredOrders() {
+
+      if(this.apiCallretryAmount > 1){
+        this.apiCallretryAmount = 0;
+        return;
+      }
+
       this.ordersService.getOrderPredictionsFiltered(this.orderFilters).subscribe((response: HttpResponse<CustomerOrderPredictionDTO[]>) => {
       this.dataSource.data = response.body as CustomerOrderPredictionDTO[]
 
       if(this.dataSource.data.length == 0){
+
         this.orderFilters = {
           page:1,
           pageSize:this.orderFilters.pageSize,
@@ -102,6 +119,7 @@ export class OrdersPredictionIndexComponent implements OnInit, AfterViewInit {
         }
     
         this.writeOrderFiltersInUrl(this.orderFilters)
+        this.apiCallretryAmount++;
         this.getFilteredOrders()
       }
 
@@ -135,6 +153,7 @@ export class OrdersPredictionIndexComponent implements OnInit, AfterViewInit {
   }
 
   filterValueHandler(filterValue: string) {
+
     this.orderFilters = {
       page:1,
       pageSize:this.orderFilters.pageSize,
@@ -155,6 +174,7 @@ export class OrdersPredictionIndexComponent implements OnInit, AfterViewInit {
   }
 
   writeOrderFiltersInUrl(filterValues: OrderPredictionFilterDTO){
+
     let queryStrings = []
 
     if(filterValues.customerName){
@@ -173,6 +193,7 @@ export class OrdersPredictionIndexComponent implements OnInit, AfterViewInit {
   }
 
   readQueryStringsFromUrl(){
+
     this.activatedRouteService.queryParams.subscribe( (params:any) => {
       var object : any = {}
 
