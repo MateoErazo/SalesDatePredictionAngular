@@ -12,7 +12,7 @@ import { CustomerOrderPredictionDTO } from '../DTO/CustomerOrderPredictionDTO';
 import { HttpResponse } from '@angular/common/http';
 import { OrderPredictionFilterDTO } from '../DTO/OrderPredictionFilterDTO';
 import { DatePipe, Location } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 
 @Component({
@@ -28,6 +28,7 @@ export class OrdersPredictionIndexComponent implements OnInit, AfterViewInit {
   private locationService = inject(Location)
   private activatedRouteService = inject(ActivatedRoute)
   private _snackBar = inject(MatSnackBar);
+  private router = inject(Router)
   displayedColumns: string[] = ['customerName','lastOrderDate','nextPredictedOrder','viewOrders', 'newOrder'];
   dataSource = new MatTableDataSource<CustomerOrderPredictionDTO>();
   totalRecordsAmount!: number
@@ -137,6 +138,7 @@ export class OrdersPredictionIndexComponent implements OnInit, AfterViewInit {
 
   viewOrderHandler(order : CustomerOrderPredictionDTO){
     console.log('customer order:', order)
+    this.router.navigate(['orders/'])
   }
 
   newOrderOpenDialog(customerOrder: CustomerOrderPredictionDTO):void{
