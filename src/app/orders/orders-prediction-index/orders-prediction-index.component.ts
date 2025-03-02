@@ -13,6 +13,7 @@ import { HttpResponse } from '@angular/common/http';
 import { OrderPredictionFilterDTO } from '../DTO/OrderPredictionFilterDTO';
 import { DatePipe, Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
+import { OrdersIndexComponent } from '../orders-index/orders-index.component';
 
 
 @Component({
@@ -136,9 +137,12 @@ export class OrdersPredictionIndexComponent implements OnInit, AfterViewInit {
     });
   }
 
-  viewOrderHandler(order : CustomerOrderPredictionDTO){
-    console.log('customer order:', order)
-    this.router.navigate(['orders/'])
+  viewOrdersOpenDialog(order : CustomerOrderPredictionDTO){
+    const dialogRef = this.dialog.open(OrdersIndexComponent, {
+      data: order,
+      width: '1100px',
+      maxWidth: '100%'
+    })
   }
 
   newOrderOpenDialog(customerOrder: CustomerOrderPredictionDTO):void{
