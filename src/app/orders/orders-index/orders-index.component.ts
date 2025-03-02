@@ -6,28 +6,31 @@ import { OrderDTO } from '../DTO/OrderDTO';
 import { OrdersService } from '../services/orders.service';
 import { OrderFilterDTO } from '../DTO/OrderFilterDTO';
 import { HttpResponse } from '@angular/common/http';
+import {MatDialogContent, MatDialogActions, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import { CustomerOrderPredictionDTO } from '../DTO/CustomerOrderPredictionDTO';
 
 @Component({
   selector: 'app-orders-index',
-  imports: [MatTableModule, MatPaginatorModule, MatSortModule],
+  imports: [MatTableModule, MatPaginatorModule, MatSortModule, MatDialogContent, MatDialogActions],
   templateUrl: './orders-index.component.html',
   styleUrl: './orders-index.component.css'
 })
 
 export class OrdersIndexComponent implements OnInit {
-  
+  readonly dialogRef = inject(MatDialogRef<OrdersIndexComponent>);
+  readonly dialogData = inject<CustomerOrderPredictionDTO>(MAT_DIALOG_DATA);
   displayedColumns: string[] = ['orderid','requireddate','shippeddate','shipname','shipaddress','shipcity']
   dataSource = new MatTableDataSource<OrderDTO>()
   totalRecordsAmount!: number
   pagesAmount!: number
   orderFilter: OrderFilterDTO = {
-    customerId: 85,
+    customerId: this.dialogData.customerId,
     page: 1,
     pageSize: 5
   }
   private ordersService = inject(OrdersService)
 
-  ngOnInit(): void {
+  ngOnInit(): void {  
     this.getOrders()
   }
 
@@ -37,6 +40,20 @@ export class OrdersIndexComponent implements OnInit {
       const recordsHeader = response.headers.get("total-records-amount") as string;
       this.totalRecordsAmount = parseInt(recordsHeader, 10);
     })
+  }
+
+  updatePagination(data: PageEvent){
+    this.orderFilter = {
+      customerId: this.orderFilter.customerId,
+      page: data.pageIndex + 1,
+      pageSize: data.pageSize 
+    }
+
+    this.getOrders()
+  }
+
+  onNoClick(): void{
+    this.dialogRef.close();
   }
 
 }
